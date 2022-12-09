@@ -1,19 +1,19 @@
 package Voyageur_De_Commerce;
 
-import Algo_Genetiques.Individu
+import Algo_Genetiques.Individu;
 
 public class Individu_VDC implements Individu {
 
 	//Constructeur
 	public Individu_VDC(double[] coord_x, double[] coord_y) {
-		// TODO 
+		// TODO
 	}
 
 	/* Classes de l'interface Individu
 	 */
 	@Override
 	public double adaptation() {
-		// TODO 
+		// TODO
 		return 0;
 	}
 	@Override
@@ -29,7 +29,7 @@ public class Individu_VDC implements Individu {
 		// }
 		// Random r = new Random();
 		// int ind = r.nextInt(parcours.length);
-		
+
 		// // on regarde les villes qu'on rencontre dans la premiere partie
 		// for(int i=0;i<ind;i++){
 		// 	enfants[0].parcours[i] = this.parcours[i];
@@ -38,19 +38,19 @@ public class Individu_VDC implements Individu {
 		// 	enfants[1].parcours[i] = conjoint_vdc.parcours[i];
 		// 	b2[conjoint_vdc.parcours[i]] = true;
 		// }
-		
+
 		// //deuxieme partie : si la ville n'a pas été visitée dans la premiere partie, on prend
-		
-		// //fin : on complète avec les villes non rencontrées 
+
+		// //fin : on complète avec les villes non rencontrées
 
 		return null;
 	}
 	@Override
 	public void mutation(double prob) {
-		// TODO 
-		
+		// TODO
+
 	}
-	
+
 	/* Accesseurs (pour Display_VDC)
 	 */
 	public int[] get_parcours(){
@@ -59,8 +59,8 @@ public class Individu_VDC implements Individu {
 	public double[] get_coord_x(){
 		return null;
 	}
-	
+
 	public double[] get_coord_y(){
 		return null;
-	}	
+	}
 }
