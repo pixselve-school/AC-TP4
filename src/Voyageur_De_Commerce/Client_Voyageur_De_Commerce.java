@@ -1,6 +1,9 @@
 package Voyageur_De_Commerce;
 
 import java.io.*;
+import java.util.Arrays;
+
+import Algo_Genetiques.Individu_SAD;
 import Util.Lecture;
 import Algo_Genetiques.Population;
 
@@ -30,7 +33,7 @@ public class Client_Voyageur_De_Commerce {
 
 	public static void main(String[] args) throws InterruptedException{
 
-		/* on initialise les coordonnées des villes en les lisant ds un fichier 
+		/* on initialise les coordonnées des villes en les lisant ds un fichier
 		 */
 
 		int nbr_villes = 64;
@@ -43,7 +46,22 @@ public class Client_Voyageur_De_Commerce {
 		Individu_VDC ind1 = new Individu_VDC(coord_x, coord_y); //on crée un individu aléatoire
 		Display_VDC disp = new Display_VDC(ind1); //on l'affiche
 		Thread.sleep(1000); //pause de 1 seconde (pour avoir le temps de voir le premier affichage)
-		Individu_VDC ind2 = new Individu_VDC(coord_x, coord_y); //on en crée un autre
-		disp.refresh(ind2); //on met à jour l'affichage avec le nouveau
+
+
+		int nbr_indiv = 300;
+		double prob_mut = 0.001;
+
+		Individu_VDC[] popu = Arrays.stream(new Individu_VDC[nbr_indiv]).map(i -> new Individu_VDC(coord_x, coord_y)).toArray(Individu_VDC[]::new);
+
+		Population<Individu_VDC> pop = new Population<>(popu);
+
+		int nb_iter = 0;
+		int nb_iter_max = 1000;
+		while (nb_iter < nb_iter_max) {
+			pop.reproduction(prob_mut);
+			System.out.println("génération " + nb_iter + " : adaptation moyenne = " + pop.adaptation_moyenne() + ", adaptation max = " + pop.adaptation_maximale());
+			disp.refresh(pop.individu_maximal());
+			nb_iter++;
+		}
 	}
 }
