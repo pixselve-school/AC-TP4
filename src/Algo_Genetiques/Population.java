@@ -44,7 +44,7 @@ public class Population<Indiv extends Individu> {
 
         /***** on construit la nouvelle génération ****/
         List<Indiv> new_generation = new ArrayList<Indiv>();
-        
+
         // tant qu'on n'a pas le bon nombre
         double adaptTotale = adaptationSum();
 

@@ -33,7 +33,7 @@ public class Client_Voyageur_De_Commerce {
 		/* on initialise les coordonnées des villes en les lisant ds un fichier 
 		 */
 
-		int nbr_villes = 16;
+		int nbr_villes = 64;
 		double[] coord_x = new double[nbr_villes];
 		double[] coord_y = new double[nbr_villes];
 		charge_coords("data_vdc/"+nbr_villes+"coords.txt",nbr_villes, coord_x, coord_y);
