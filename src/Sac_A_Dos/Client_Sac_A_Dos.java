@@ -1,8 +1,12 @@
 package Sac_A_Dos;
 
-import java.io.InputStream;
-import Util.Lecture;
+import Algo_Genetiques.Individu_SAD;
 import Algo_Genetiques.Population;
+import Util.Lecture;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Arrays;
 
 public class Client_Sac_A_Dos {
 
