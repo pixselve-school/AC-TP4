@@ -41,27 +41,26 @@ public class Client_Voyageur_De_Commerce {
 		double[] coord_y = new double[nbr_villes];
 		charge_coords("data_vdc/"+nbr_villes+"coords.txt",nbr_villes, coord_x, coord_y);
 
-		/* Exemple d'utilisation de Display_VDCC (il faut d'abord faire le constructeur pour ce test fonctionne, ainsi que compléter les accesseurs)
-		 */
-		Individu_VDC ind1 = new Individu_VDC(coord_x, coord_y); //on crée un individu aléatoire
-		Display_VDC disp = new Display_VDC(ind1); //on l'affiche
-		Thread.sleep(1000); //pause de 1 seconde (pour avoir le temps de voir le premier affichage)
+
 
 
 		int nbr_indiv = 300;
-		double prob_mut = 0.001;
+		double prob_mut = 0.05;
 
 		Individu_VDC[] popu = Arrays.stream(new Individu_VDC[nbr_indiv]).map(i -> new Individu_VDC(coord_x, coord_y)).toArray(Individu_VDC[]::new);
 
 		Population<Individu_VDC> pop = new Population<>(popu);
 
+		Display_VDC disp = new Display_VDC(pop.individu_maximal());
+
 		int nb_iter = 0;
-		int nb_iter_max = 1000;
+		int nb_iter_max = 10000;
 		while (nb_iter < nb_iter_max) {
 			pop.reproduction(prob_mut);
 			System.out.println("génération " + nb_iter + " : adaptation moyenne = " + pop.adaptation_moyenne() + ", adaptation max = " + pop.adaptation_maximale());
 			disp.refresh(pop.individu_maximal());
 			nb_iter++;
 		}
+
 	}
 }

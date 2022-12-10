@@ -70,4 +70,11 @@ public class Individu_SAD implements Individu {
         }
 
     }
+
+    @Override
+    public Individu clone() {
+        Individu_SAD clone = new Individu_SAD(poids, poidsMax);
+        System.arraycopy(genes, 0, clone.genes, 0, genes.length);
+        return clone;
+    }
 }

@@ -29,6 +29,11 @@ public class testPopulation {
         @Override
         public void mutation(double prob) {
         }
+
+        @Override
+        public Individu clone() {
+            return null;
+        }
     }
 
     @Test

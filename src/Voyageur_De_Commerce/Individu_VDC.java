@@ -2,120 +2,201 @@ package Voyageur_De_Commerce;
 
 import Algo_Genetiques.Individu;
 
-import java.util.Random;
+import java.util.*;
 
 public class Individu_VDC implements Individu {
 
-    private double[] coord_x;
-    private double[] coord_y;
+    /**
+     * tableau contenant l'ordre des villes
+     */
+    private final double[] coord_x;
+    /**
+     * coordonnées y des villes
+     */
+    private final double[] coord_y;
 
+    /**
+     * Chemin de l'individu
+     * chemin[i] = j, signifie que la ville j est visitée en i-ème position
+     */
     private int[] chemin;
 
     //Constructeur
     public Individu_VDC(double[] coord_x, double[] coord_y) {
         this.coord_x = coord_x;
         this.coord_y = coord_y;
-        this.chemin = new int[coord_x.length];
-        for (int i = 0; i < coord_x.length; i++) {
-            this.chemin[i] = i;
+
+        //on crée un tableau de taille égale au nombre de villes pour stocker le chemin de l'individu
+        int nbCities = coord_x.length;
+        this.chemin = new int[nbCities];
+
+        //on remplit le tableau chemin avec l'ordre des villes dans lequel elles doivent être visitées
+        //ici on choisit aléatoirement l'ordre des villes
+        List<Integer> cities = new ArrayList<>();
+        for (int i = 0; i < nbCities; i++) {
+            cities.add(i);
         }
-
-        //On mélange le chemin
-        shuffle();
-
-    }
-
-    private void shuffle() {
-        for (int i = 0; i < this.coord_x.length; i++) {
-            int j = (int) (Math.random() * this.coord_x.length);
-            int tmp = this.chemin[i];
-            this.chemin[i] = this.chemin[j];
-            this.chemin[j] = tmp;
+        Collections.shuffle(cities);
+        for (int i = 0; i < nbCities; i++) {
+            chemin[i] = cities.get(i);
         }
     }
-
-    /* Classes de l'interface Individu
-     */
 
     /**
      * renvoie l'adaptation de cet individu
      * La distance doit être minimisée
+     *
      * @return distance
      */
     @Override
     public double adaptation() {
+        //on calcule la distance totale parcourue en suivant l'ordre des villes dans le tableau chemin
         double distance = 0;
-        for (int i = 0; i < this.coord_x.length - 1; i++) {
-            distance += Math.sqrt(Math.pow(this.coord_x[this.chemin[i]] - this.coord_x[this.chemin[i + 1]], 2) + Math.pow(this.coord_y[this.chemin[i]] - this.coord_y[this.chemin[i + 1]], 2));
-        }
-        return 1 / distance;
+        for (int i = 0; i < chemin.length - 1; i++) {
+            //on récupère les coordonnées x et y des villes en question
+            double x1 = coord_x[chemin[i]];
+            double y1 = coord_y[chemin[i]];
+            double x2 = coord_x[chemin[i + 1]];
+            double y2 = coord_y[chemin[i + 1]];
 
+            //on calcule la distance euclidienne entre les deux villes
+            double dx = x1 - x2;
+            double dy = y1 - y2;
+            double euclidianDistance = Math.sqrt(dx * dx + dy * dy);
+
+            //on ajoute cette distance à la distance totale
+            distance += euclidianDistance;
+        }
+
+        //on retourne la distance totale
+        return 1.0 / distance;
     }
 
     @Override
     public Individu[] croisement(Individu conjoint) {
-        // Une possibilité : croisement "prudent"
-        // A COMPLETER ET À ADAPTER A VOS CHOIX DE REPRESENTATION
+        Individu_VDC conjointVDC = (Individu_VDC) conjoint;
 
-        boolean[] b1 = new boolean[chemin.length];
-        boolean[] b2 = new boolean[chemin.length];
+        //on crée deux enfants
+        Individu_VDC enfant1 = new Individu_VDC(coord_x, coord_y);
+        Individu_VDC enfant2 = new Individu_VDC(coord_x, coord_y);
+
+
+        boolean[] visiteParEnfant1 = new boolean[chemin.length]; // l'indice i est à true si la ville i est visitée par enfant1
+        boolean[] visiteParEnfant2 = new boolean[chemin.length]; // l'indice i est à true si la ville i est visitée par enfant2
+
+        // tous les chemins sont à -1 au début
+        Arrays.fill(enfant1.chemin, -1);
+        Arrays.fill(enfant2.chemin, -1);
+
+        Random random = new Random();
+        int pointCroisement = random.nextInt(chemin.length);
+        // on ajoute les premières villes jusqu'au point de croisement
+        for (int i = 0; i < pointCroisement; i++) {
+            enfant1.chemin[i] = chemin[i];
+            enfant2.chemin[i] = conjointVDC.chemin[i];
+            visiteParEnfant1[chemin[i]] = true;
+            visiteParEnfant2[conjointVDC.chemin[i]] = true;
+        }
+        // on ajoute les villes restantes (en évitant les doublons)
+        for (int i = pointCroisement; i < chemin.length; i++) {
+            if (!visiteParEnfant1[conjointVDC.chemin[i]]) {
+                enfant1.chemin[i] = conjointVDC.chemin[i];
+                visiteParEnfant1[conjointVDC.chemin[i]] = true;
+            }
+            if (!visiteParEnfant2[chemin[i]]) {
+                enfant2.chemin[i] = chemin[i];
+                visiteParEnfant2[chemin[i]] = true;
+            }
+        }
+
+        // on cherche les villes non visitées dans les enfants
+        ArrayList<Integer> villesNonVisiteesEnfant1 = new ArrayList<>();
+        ArrayList<Integer> villesNonVisiteesEnfant2 = new ArrayList<>();
         for (int i = 0; i < chemin.length; i++) {
-            b1[i] = false;
-            b2[i] = false;
-        }
-        Random r = new Random();
-        int ind = r.nextInt(chemin.length);
-
-        // // on regarde les villes qu'on rencontre dans la premiere partie
-        Individu_VDC[] enfants = {
-                new Individu_VDC(coord_x, coord_y),
-                new Individu_VDC(coord_x, coord_y)
-        };
-        for (int i = 0; i < ind; i++) {
-            enfants[0].chemin[i] = this.chemin[i];
-            b1[this.chemin[i]] = true;
-
-            enfants[1].chemin[i] = ((Individu_VDC) conjoint).chemin[i];
-            b2[((Individu_VDC)conjoint).chemin[i]] = true;
-        }
-
-        // //deuxieme partie : si la ville n'a pas été visitée dans la premiere partie, on prend
-
-        int j = 0;
-        for (int i = ind; i < chemin.length; i++) {
-            while (b1[((Individu_VDC)conjoint).chemin[j]]) {
-                j++;
+            if (!visiteParEnfant1[conjointVDC.chemin[i]]) {
+                villesNonVisiteesEnfant1.add(conjointVDC.chemin[i]);
             }
-            enfants[0].chemin[i] = ((Individu_VDC)conjoint).chemin[j];
-            b1[((Individu_VDC)conjoint).chemin[j]] = true;
-            j++;
-        }
-
-        // //fin : on complète avec les villes non rencontrées
-
-        j = 0;
-        for (int i = ind; i < chemin.length; i++) {
-            while (b2[this.chemin[j]]) {
-                j++;
+            if (!visiteParEnfant2[chemin[i]]) {
+                villesNonVisiteesEnfant2.add(chemin[i]);
             }
-            enfants[1].chemin[i] = this.chemin[j];
-            b2[this.chemin[j]] = true;
-            j++;
         }
 
-        return enfants;
+
+//        System.out.println("=================BEFORE===================");
+//        System.out.println(villesNonVisiteesEnfant1);
+//        System.out.println(Arrays.toString(visiteParEnfant1));
+//        System.out.println(indicesNonVisiteesEnfant1);
+//        System.out.println(Arrays.toString(enfant1.chemin));
+
+        // on remplace les villes non visitées par les villes non visitées de l'autre enfant
+        for (int i = 0; i < enfant1.chemin.length; i++) {
+            if (enfant1.chemin[i] == -1) {
+                enfant1.chemin[i] = villesNonVisiteesEnfant1.get(0);
+                villesNonVisiteesEnfant1.remove(0);
+            }
+        }
+        for (int i = 0; i < enfant2.chemin.length; i++) {
+            if (enfant2.chemin[i] == -1) {
+                enfant2.chemin[i] = villesNonVisiteesEnfant2.get(0);
+                villesNonVisiteesEnfant2.remove(0);
+            }
+        }
+
+//        System.out.println("=================AFTER===================");
+//        System.out.println(villesNonVisiteesEnfant1);
+//        System.out.println(Arrays.toString(visiteParEnfant1));
+//        System.out.println(indicesNonVisiteesEnfant1);
+//        System.out.println(Arrays.toString(enfant1.chemin));
+
+
+        // si il reste des villes à -1, throw exception
+        for (int i = 0; i < chemin.length; i++) {
+            if (enfant1.chemin[i] == -1 || enfant2.chemin[i] == -1) {
+                throw new RuntimeException("Erreur dans le croisement");
+            }
+        }
+
+
+        return new Individu[]{enfant1, enfant2};
+
+
     }
+
 
     @Override
     public void mutation(double prob) {
-        for (int i = 0; i < this.coord_x.length; i++) {
-            if (Math.random() < prob) {
-                int ind = (int) (Math.random() * this.coord_x.length);
-                int tmp = this.chemin[i];
-                this.chemin[i] = this.chemin[ind];
-                this.chemin[ind] = tmp;
+        Random r = new Random();
+
+        //on parcourt le chemin
+        for (int i = 0; i < chemin.length; i++) {
+            //on tire un nombre aléatoire entre 0 et 1
+            double rand = r.nextDouble();
+            //si ce nombre est inférieur à la probabilité de mutation
+            if (rand < prob) {
+                //on tire un autre nombre aléatoire entre 0 et 1
+                rand = r.nextDouble();
+                //on tire un indice aléatoire entre 0 et le nombre de villes
+                int indice = r.nextInt(chemin.length);
+                //on échange la ville courante avec la ville d'indice tiré aléatoirement
+                int temp = chemin[i];
+                chemin[i] = chemin[indice];
+                chemin[indice] = temp;
             }
         }
+
+    }
+
+    private void swap(int i1, int i2) {
+        int tmp = chemin[i1];
+        chemin[i1] = chemin[i2];
+        chemin[i2] = tmp;
+    }
+
+    @Override
+    public Individu clone() {
+        Individu_VDC clone = new Individu_VDC(coord_x, coord_y);
+        clone.chemin = Arrays.copyOf(chemin, chemin.length);
+        return clone;
     }
 
 

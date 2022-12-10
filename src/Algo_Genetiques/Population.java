@@ -22,15 +22,26 @@ public class Population<Indiv extends Individu> {
      * @param adapt_totale somme des adaptations de tous les individus (pour ne pas avoir à la recalculer)
      * @return indice de l'individu sélectionné
      */
-    public int selection(double adapt_totale) {
-        double alea = Math.random() * adapt_totale;
-        double somme = 0;
-        int i = 0;
-        while (somme < alea) {
-            somme += population.get(i).adaptation();
-            i++;
+    public int selection(double adapt_totale){
+        //on utilise un générateur de nombres aléatoires pour choisir un nombre entre 0 et adapt_totale
+        Random rand = new Random();
+        double randValue = rand.nextDouble() * adapt_totale;
+
+        //on parcourt tous les individus et on calcule leur adaptation relative
+        //c'est-à-dire leur adaptation divisée par la somme des adaptations de tous les individus
+        double adapt_relative = 0;
+        for (int i = 0; i < population.size(); i++) {
+            adapt_relative += population.get(i).adaptation() / adapt_totale;
+
+            //si le nombre aléatoire est inférieur à l'adaptation relative de l'individu,
+            //c'est que l'individu a été sélectionné
+            if (randValue <= adapt_relative) {
+                return i;
+            }
         }
-        return i - 1;
+
+        //si aucun individu n'a été sélectionné, on retourne l'indice de l'individu ayant la plus grande adaptation
+        return population.size() - 1;
     }
 
     /**
@@ -47,6 +58,19 @@ public class Population<Indiv extends Individu> {
 
         // tant qu'on n'a pas le bon nombre
         double adaptTotale = adaptationSum();
+
+        // Élitisme
+        //on trie la liste des individus par ordre décroissant d'adaptation
+//        population.sort((Indiv ind1, Indiv ind2) -> Double.compare(ind2.adaptation(), ind1.adaptation()));
+////
+////        //on ajoute les meilleurs individus de la génération courante à la nouvelle génération
+//        int nbElites = (int) (population.size() * .1); //on choisit un pourcentage d'élites
+//
+//        for (int i = 0; i < nbElites; i++) {
+//            new_generation.add(population.get(i));
+//        }
+////
+//        // tant qu'on n'a pas le bon nombre
 
         while (new_generation.size() < population.size() - 1) {
             // on sélectionne les parents
@@ -65,19 +89,37 @@ public class Population<Indiv extends Individu> {
         for (Indiv individu : new_generation) {
             individu.mutation(prob_mut);
         }
-        // Élitisme
+
+        // on ajoute le max
         new_generation.add(individu_maximal());
+
+
+//        for (int i = nbElites; i < population.size(); i++) {
+//            new_generation.get(i).mutation(prob_mut);
+//        }
+
+
 
 
         //on remplace l'ancienne par la nouvelle
         population = new_generation;
     }
 
+    private List<Indiv> getElite(int nbElite){
+        List<Indiv> elite = new ArrayList<>();
+        List<Indiv> populationCopy = new ArrayList<>(population);
+        populationCopy.sort(Comparator.comparing(Indiv::adaptation));
+        for (int i = 0; i < nbElite; i++) {
+            elite.add(populationCopy.get(i));
+        }
+        return elite;
+    }
+
     /**
      * renvoie l'individu de la population ayant l'adaptation maximale
      */
     public Indiv individu_maximal() {
-        return population.stream().max(Comparator.comparingDouble(Individu::adaptation)).orElseThrow(NoSuchElementException::new);
+        return (Indiv) population.stream().max(Comparator.comparingDouble(Individu::adaptation)).orElseThrow(NoSuchElementException::new).clone();
     }
 
     /**
