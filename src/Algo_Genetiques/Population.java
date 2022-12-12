@@ -22,7 +22,7 @@ public class Population<Indiv extends Individu> {
      * @param adapt_totale somme des adaptations de tous les individus (pour ne pas avoir à la recalculer)
      * @return indice de l'individu sélectionné
      */
-    public int selection(double adapt_totale){
+    public int selection(double adapt_totale) {
         //on utilise un générateur de nombres aléatoires pour choisir un nombre entre 0 et adapt_totale
         Random rand = new Random();
         double randValue = rand.nextDouble() * adapt_totale;
@@ -99,13 +99,11 @@ public class Population<Indiv extends Individu> {
 //        }
 
 
-
-
         //on remplace l'ancienne par la nouvelle
         population = new_generation;
     }
 
-    private List<Indiv> getElite(int nbElite){
+    private List<Indiv> getElite(int nbElite) {
         List<Indiv> elite = new ArrayList<>();
         List<Indiv> populationCopy = new ArrayList<>(population);
         populationCopy.sort(Comparator.comparing(Indiv::adaptation));

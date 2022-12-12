@@ -111,12 +111,6 @@ public class Individu_VDC implements Individu {
         }
 
 
-//        System.out.println("=================BEFORE===================");
-//        System.out.println(villesNonVisiteesEnfant1);
-//        System.out.println(Arrays.toString(visiteParEnfant1));
-//        System.out.println(indicesNonVisiteesEnfant1);
-//        System.out.println(Arrays.toString(enfant1.chemin));
-
         // on remplace les villes non visitées par les villes non visitées de l'autre enfant
         for (int i = 0; i < enfant1.chemin.length; i++) {
             if (enfant1.chemin[i] == -1) {
@@ -130,12 +124,6 @@ public class Individu_VDC implements Individu {
                 villesNonVisiteesEnfant2.remove(0);
             }
         }
-
-//        System.out.println("=================AFTER===================");
-//        System.out.println(villesNonVisiteesEnfant1);
-//        System.out.println(Arrays.toString(visiteParEnfant1));
-//        System.out.println(indicesNonVisiteesEnfant1);
-//        System.out.println(Arrays.toString(enfant1.chemin));
 
 
         // si il reste des villes à -1, throw exception

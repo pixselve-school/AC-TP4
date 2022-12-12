@@ -8,34 +8,6 @@ import static org.junit.Assert.assertEquals;
 
 public class testPopulation {
 
-    //une classe qui implemente Individu et qui permet juste de spécifier adaptation
-    class Individu_Test implements Algo_Genetiques.Individu {
-        private double adapt;
-
-        Individu_Test(double a) {
-            adapt = a;
-        }
-
-        @Override
-        public double adaptation() {
-            return adapt;
-        }
-
-        @Override
-        public Individu[] croisement(Individu conjoint) {
-            return null;
-        }
-
-        @Override
-        public void mutation(double prob) {
-        }
-
-        @Override
-        public Individu clone() {
-            return null;
-        }
-    }
-
     @Test
     public void testSelection() {
 
@@ -80,6 +52,34 @@ public class testPopulation {
         Individu_Test[] t_test = {new Individu_Test(1), new Individu_Test(2), ind_max, new Individu_Test(0)};
         Population<Individu_Test> popu_test = new Population<Individu_Test>(t_test);
         assertEquals(ind_max, popu_test.individu_maximal());
+    }
+
+    //une classe qui implemente Individu et qui permet juste de spécifier adaptation
+    class Individu_Test implements Algo_Genetiques.Individu {
+        private double adapt;
+
+        Individu_Test(double a) {
+            adapt = a;
+        }
+
+        @Override
+        public double adaptation() {
+            return adapt;
+        }
+
+        @Override
+        public Individu[] croisement(Individu conjoint) {
+            return null;
+        }
+
+        @Override
+        public void mutation(double prob) {
+        }
+
+        @Override
+        public Individu clone() {
+            return null;
+        }
     }
 
 }
