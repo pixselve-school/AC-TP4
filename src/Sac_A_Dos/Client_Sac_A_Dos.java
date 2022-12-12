@@ -45,8 +45,8 @@ public class Client_Sac_A_Dos {
 
         /* On initialise les poids en lisant un fichier
          */
-        int nbr_objets = 28;
-        int capacite = 1581;
+        int nbr_objets = 70;
+        int capacite = 350;
 
 //		int nbr_objets=70;
 //		int capacite=350;

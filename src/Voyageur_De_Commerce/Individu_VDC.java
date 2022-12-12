@@ -51,25 +51,14 @@ public class Individu_VDC implements Individu {
     @Override
     public double adaptation() {
         //on calcule la distance totale parcourue en suivant l'ordre des villes dans le tableau chemin
-        double distance = 0;
+        double total = 0;
         for (int i = 0; i < chemin.length - 1; i++) {
-            //on récupère les coordonnées x et y des villes en question
-            double x1 = coord_x[chemin[i]];
-            double y1 = coord_y[chemin[i]];
-            double x2 = coord_x[chemin[i + 1]];
-            double y2 = coord_y[chemin[i + 1]];
-
-            //on calcule la distance euclidienne entre les deux villes
-            double dx = x1 - x2;
-            double dy = y1 - y2;
-            double euclidianDistance = Math.sqrt(dx * dx + dy * dy);
-
             //on ajoute cette distance à la distance totale
-            distance += euclidianDistance;
+            total += distance(chemin[i], chemin[i + 1]);
         }
 
         //on retourne la distance totale
-        return 1.0 / distance;
+        return 1.0 / total;
     }
 
     @Override
@@ -156,7 +145,8 @@ public class Individu_VDC implements Individu {
             }
         }
 
-
+        enfant1.optim_2opt();
+        enfant2.optim_2opt();
         return new Individu[]{enfant1, enfant2};
 
 
@@ -173,8 +163,6 @@ public class Individu_VDC implements Individu {
             double rand = r.nextDouble();
             //si ce nombre est inférieur à la probabilité de mutation
             if (rand < prob) {
-                //on tire un autre nombre aléatoire entre 0 et 1
-                rand = r.nextDouble();
                 //on tire un indice aléatoire entre 0 et le nombre de villes
                 int indice = r.nextInt(chemin.length);
                 //on échange la ville courante avec la ville d'indice tiré aléatoirement
@@ -183,6 +171,45 @@ public class Individu_VDC implements Individu {
                 chemin[indice] = temp;
             }
         }
+
+    }
+
+    public void optim_2opt() {
+        for (int i = 0; i < chemin.length; i++) {
+            for (int j = i + 1; j < chemin.length; j++) {
+                if (gain(i, j) < 0) {
+                    for (int k = 0; k < (j - i + 1) / 2; k++) {
+                        int tmp = chemin[i + k];
+                        chemin[i + k] = chemin[j - k];
+                        chemin[j - k] = tmp;
+
+                    }
+                }
+            }
+        }
+    }
+
+    private double gain(int i, int j) {
+        int nb_villes = chemin.length;
+        double gain = distance(chemin[i], chemin[(j + 1) % nb_villes])
+                + distance(chemin[(i + nb_villes - 1) % nb_villes], chemin[j])
+                - distance(chemin[(i + nb_villes - 1) % nb_villes], chemin[i])
+                - distance(chemin[j], chemin[(j + 1) % nb_villes]);
+        return gain;
+    }
+
+    private double distance(int i, int i1) {
+        //on récupère les coordonnées x et y des villes en question
+        double x1 = coord_x[i];
+        double y1 = coord_y[i];
+        double x2 = coord_x[i1];
+        double y2 = coord_y[i1];
+
+        //on calcule la distance euclidienne entre les deux villes
+        double dx = x1 - x2;
+        double dy = y1 - y2;
+
+        return Math.sqrt(dx * dx + dy * dy);
 
     }
 
